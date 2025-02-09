@@ -2,6 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 require("dotenv").config();
+const puppeteer = require("puppeteer");
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,25 +28,16 @@ const NSE_UNDERLYING_URL =
   "https://www.nseindia.com/api/underlying-information";
 
 // ** Function to get NSE session cookies **
-const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
-  try {
-    return await axiosInstance.get(url, options);
-  } catch (error) {
-    if (retries > 0 && error.code === "ECONNRESET") {
-      console.log(`Retrying... Attempts left: ${retries}`);
-      await new Promise((res) => setTimeout(res, delay));
-      return fetchWithRetry(url, options, retries - 1, delay * 2); // Exponential backoff
-    }
-    throw error;
-  }
-};
+
 const getNseCookies = async () => {
   try {
-    const response = await fetchWithRetry("https://www.nseindia.com/", {
+    const response = await axios.get("https://www.nseindia.com/", {
       headers: {
-        Cookie: "",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
       },
     });
+
     return response.headers["set-cookie"];
   } catch (error) {
     console.error("Error fetching NSE cookies:", error.message);
