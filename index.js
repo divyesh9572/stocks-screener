@@ -14,10 +14,12 @@ app.use(cors({
 
 const axiosInstance = axios.create({
   headers: {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
     "Accept-Language": "en-US,en;q=0.9",
-    Referer: "https://www.nseindia.com/"
-  }
+    Referer: "https://www.nseindia.com/",
+  },
+  timeout: 10000, // 10 seconds timeout
 });
 
 const NSE_BHAVCOPY_URL = "https://www.nseindia.com/api/reports";
@@ -27,19 +29,18 @@ const NSE_UNDERLYING_URL =
 // ** Function to get NSE session cookies **
 const getNseCookies = async () => {
   try {
-    const response = await axiosInstance.get("https://www.nseindia.com/", {
+    const response = await fetchWithRetry("https://www.nseindia.com/", {
       headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        Cookie: "",
       },
     });
-
     return response.headers["set-cookie"];
   } catch (error) {
     console.error("Error fetching NSE cookies:", error.message);
     return null;
   }
 };
+
 
 // ** Function to fetch Bhavcopy data for a given date **
 const fetchBhavcopyData = async (date, cookies) => {
