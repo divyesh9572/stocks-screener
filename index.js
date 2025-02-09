@@ -4,16 +4,22 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: "*", // Allows requests from any origin
+  methods: ["GET", "POST"], // Allow specific HTTP methods
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 const axiosInstance = axios.create({
-  timeout: 20000, // 10 seconds timeout
   headers: {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-  },
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "Accept-Language": "en-US,en;q=0.9",
+    Referer: "https://www.nseindia.com/"
+  }
 });
+
 const NSE_BHAVCOPY_URL = "https://www.nseindia.com/api/reports";
 const NSE_UNDERLYING_URL =
   "https://www.nseindia.com/api/underlying-information";
@@ -643,5 +649,5 @@ app.get("/sector-daily", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running on http://0.0.0.0:${port}`);
+  console.log(`Server running on port ${port}`);
 });
