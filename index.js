@@ -2,7 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 require("dotenv").config();
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
 
 const app = express();
 const port = process.env.PORT || 3000;
