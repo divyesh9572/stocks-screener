@@ -27,6 +27,18 @@ const NSE_UNDERLYING_URL =
   "https://www.nseindia.com/api/underlying-information";
 
 // ** Function to get NSE session cookies **
+const fetchWithRetry = async (url, options, retries = 3, delay = 1000) => {
+  try {
+    return await axiosInstance.get(url, options);
+  } catch (error) {
+    if (retries > 0 && error.code === "ECONNRESET") {
+      console.log(`Retrying... Attempts left: ${retries}`);
+      await new Promise((res) => setTimeout(res, delay));
+      return fetchWithRetry(url, options, retries - 1, delay * 2); // Exponential backoff
+    }
+    throw error;
+  }
+};
 const getNseCookies = async () => {
   try {
     const response = await fetchWithRetry("https://www.nseindia.com/", {
