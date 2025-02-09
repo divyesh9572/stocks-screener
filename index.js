@@ -8,6 +8,12 @@ const port = process.env.PORT || 3001;
 
 app.use(cors());
 
+const axiosInstance = axios.create({
+  timeout: 20000, // 10 seconds timeout
+  headers: {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+  },
+});
 const NSE_BHAVCOPY_URL = "https://www.nseindia.com/api/reports";
 const NSE_UNDERLYING_URL =
   "https://www.nseindia.com/api/underlying-information";
@@ -15,7 +21,7 @@ const NSE_UNDERLYING_URL =
 // ** Function to get NSE session cookies **
 const getNseCookies = async () => {
   try {
-    const response = await axios.get("https://www.nseindia.com/", {
+    const response = await axiosInstance.get("https://www.nseindia.com/", {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -46,7 +52,7 @@ const fetchBhavcopyData = async (date, cookies) => {
       mode: "single",
     };
 
-    const response = await axios.get(NSE_BHAVCOPY_URL, {
+    const response = await axiosInstance.get(NSE_BHAVCOPY_URL, {
       params: queryParams,
       headers: {
         "User-Agent":
@@ -88,7 +94,7 @@ const fetchSectorcopyData = async (date, cookies) => {
 
     // Construct the dynamic URL
     const NSE_SECTORCOPY_URL = `https://nsearchives.nseindia.com/archives/equities/mkt/${fileName}`;
-    const response = await axios.get(NSE_SECTORCOPY_URL, {
+    const response = await axiosInstance.get(NSE_SECTORCOPY_URL, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -108,7 +114,7 @@ const fetchNifty500Data = async (cookies) => {
   try {
     const NIFTY500_URL =
       "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv";
-    const response = await axios.get(NIFTY500_URL, {
+    const response = await axiosInstance.get(NIFTY500_URL, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -209,7 +215,7 @@ const parseCSV1 = (csvData) => {
 // ** Function to fetch NSE Underlying Information and extract symbols **
 const getNseUnderlyingSymbols = async (cookies) => {
   try {
-    const response = await axios.get(NSE_UNDERLYING_URL, {
+    const response = await axiosInstance.get(NSE_UNDERLYING_URL, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
