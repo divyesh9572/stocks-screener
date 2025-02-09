@@ -1,7 +1,7 @@
-import express from "express";
-import axios from "axios";
-import cors from "cors";
-require('dotenv').config()
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -637,5 +637,5 @@ app.get("/sector-daily", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running on http://0.0.0.0:${PORT}`);
+  console.log(`Server running on http://0.0.0.0:${port}`);
 });
