@@ -129,6 +129,7 @@ const fetchNifty500Data = async (cookies) => {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         Referer: "https://www.nseindia.com/",
+        Cookie: cookies.join("; "),
       },
     });
 
@@ -296,12 +297,6 @@ app.get("/nse-bhavcopy", async (req, res) => {
         .json({ error: "At least two dates are required for comparison" });
     }
 
-    // Get NSE session cookies
-    const data = await fetchNifty500Data();
-    const industryMap = data.reduce((acc, item) => {
-      acc[item.Symbol] = item.Industry;
-      return acc;
-    }, {});
     const cookies = await getNseCookies();
     console.log(cookies);
     
@@ -310,6 +305,13 @@ app.get("/nse-bhavcopy", async (req, res) => {
         .status(500)
         .json({ error: "Failed to fetch NSE session cookies" });
     }
+    // Get NSE session cookies
+    const data = await fetchNifty500Data(cookies);
+    const industryMap = data.reduce((acc, item) => {
+      acc[item.Symbol] = item.Industry;
+      return acc;
+    }, {});
+    
 
     // Fetch NSE Underlying Symbols
     const validSymbols = await getNseUnderlyingSymbols(cookies);
