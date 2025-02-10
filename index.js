@@ -28,13 +28,20 @@ const NSE_UNDERLYING_URL =
 
 // ** Function to get NSE session cookies **
 
+
 const getNseCookies = async () => {
   try {
     const response = await axios.get("https://www.nseindia.com/", {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept":
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://www.nseindia.com/",
+        "Connection": "keep-alive",
       },
+      timeout: 5000, // 5 seconds timeout
     });
 
     return response.headers["set-cookie"];
