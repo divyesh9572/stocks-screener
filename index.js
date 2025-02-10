@@ -2,10 +2,9 @@ const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 require("dotenv").config();
-const puppeteer = require("puppeteer");
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;  
 
 app.use(cors({
   origin: "*", // Allows requests from any origin
@@ -69,7 +68,7 @@ const fetchBhavcopyData = async (date, cookies) => {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         Referer: "https://www.nseindia.com/",
-        Cookie: cookies.join("; "),
+        // Cookie: cookies.join("; "),
       },
     });
 
@@ -110,7 +109,7 @@ const fetchSectorcopyData = async (date, cookies) => {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         Referer: "https://www.nseindia.com/",
-        Cookie: cookies.join("; "),
+        // Cookie: cookies.join("; "),
       },
     });
 
@@ -231,7 +230,7 @@ const getNseUnderlyingSymbols = async (cookies) => {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         Referer: "https://www.nseindia.com/",
-        Cookie: cookies.join("; "),
+        // Cookie: cookies.join("; "),
       },
     });
 
