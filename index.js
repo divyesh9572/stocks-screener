@@ -29,31 +29,29 @@ const NSE_UNDERLYING_URL =
 // ** Function to get NSE session cookies **
 
 
-const getNseCookies = async () => {
-  try {
-    const response = await axios.get("https://www.nseindia.com/", {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-        "Accept":
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Referer": "https://www.nseindia.com/",
-        "Connection": "keep-alive",
-      },
-      proxy: {
-        host: "5.78.124.240", // Replace with a working free proxy IP
-        port: 40000, // Replace with the correct proxy port
-      },
-      timeout: 10000, // Increase timeout to avoid errors
-    });
+const puppeteer = require("puppeteer");
 
-    return response.headers["set-cookie"];
-  } catch (error) {
-    console.error("Error fetching NSE cookies:", error.message);
-    return null;
-  }
+const getNseCookies = async () => {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+
+  // Set user agent to mimic a real browser
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  );
+
+  // Visit NSE website
+  await page.goto("https://www.nseindia.com/", { waitUntil: "networkidle2" });
+
+  // Get Cookies
+  const cookies = await page.cookies();
+
+  await browser.close();
+  console.log("Cookies:", cookies);
+  return cookies;
 };
+
+
 
 // ** Function to fetch Bhavcopy data for a given date **
 const fetchBhavcopyData = async (date, cookies) => {
