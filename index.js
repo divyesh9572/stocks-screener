@@ -29,35 +29,23 @@ const NSE_UNDERLYING_URL =
 // ** Function to get NSE session cookies **
 
 
-const getFreeProxy = async () => {
-  try {
-    const proxyResponse = await axios.get("https://www.proxy-list.download/api/v1/get?type=https");
-    const proxyList = proxyResponse.data.split("\r\n").filter((p) => p);
-    return proxyList.length ? proxyList[0].split(":") : null; // Get the first available proxy
-  } catch (error) {
-    console.error("Error fetching free proxy:", error.message);
-    return null;
-  }
-};
-
 const getNseCookies = async () => {
-  const proxy = await getFreeProxy();
-  if (!proxy) {
-    console.error("No proxy found.");
-    return null;
-  }
-
   try {
     const response = await axios.get("https://www.nseindia.com/", {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept":
+          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://www.nseindia.com/",
+        "Connection": "keep-alive",
       },
       proxy: {
-        host: proxy[0], // Proxy IP
-        port: parseInt(proxy[1]), // Proxy Port
+        host: "5.78.124.240", // Replace with a working free proxy IP
+        port: 40000, // Replace with the correct proxy port
       },
-      timeout: 10000,
+      timeout: 10000, // Increase timeout to avoid errors
     });
 
     return response.headers["set-cookie"];
