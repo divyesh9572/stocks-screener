@@ -1,57 +1,31 @@
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import axios from "axios";
+import cors from "cors";
 
 const app = express();
-const port = process.env.PORT || 3000;  
+const PORT = 3000;
 
-app.use(cors({
-  origin: "*", // Allows requests from any origin
-  methods: ["GET", "POST"], // Allow specific HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
-const axiosInstance = axios.create({
-  headers: {
-    "User-Agent":
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    "Accept-Language": "en-US,en;q=0.9",
-    Referer: "https://www.nseindia.com/",
-  },
-  timeout: 10000, // 10 seconds timeout
-});
-
+app.use(cors());
 const NSE_BHAVCOPY_URL = "https://www.nseindia.com/api/reports";
 const NSE_UNDERLYING_URL =
   "https://www.nseindia.com/api/underlying-information";
 
 // ** Function to get NSE session cookies **
-
-
-const puppeteer = require("puppeteer");
-
 const getNseCookies = async () => {
-  const browser = await puppeteer.launch({ headless: true });
-  const page = await browser.newPage();
+  try {
+    const response = await axios.get("https://www.nseindia.com/", {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
+    });
 
-  // Set user agent to mimic a real browser
-  await page.setUserAgent(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-  );
-
-  // Visit NSE website
-  await page.goto("https://www.nseindia.com/", { waitUntil: "networkidle2" });
-
-  // Get Cookies
-  const cookies = await page.cookies();
-
-  await browser.close();
-  console.log("Cookies:", cookies);
-  return cookies;
+    return response.headers["set-cookie"];
+  } catch (error) {
+    console.error("Error fetching NSE cookies:", error.message);
+    return null;
+  }
 };
-
-
 
 // ** Function to fetch Bhavcopy data for a given date **
 const fetchBhavcopyData = async (date, cookies) => {
@@ -70,7 +44,7 @@ const fetchBhavcopyData = async (date, cookies) => {
       mode: "single",
     };
 
-    const response = await axiosInstance.get(NSE_BHAVCOPY_URL, {
+    const response = await axios.get(NSE_BHAVCOPY_URL, {
       params: queryParams,
       headers: {
         "User-Agent":
@@ -112,7 +86,7 @@ const fetchSectorcopyData = async (date, cookies) => {
 
     // Construct the dynamic URL
     const NSE_SECTORCOPY_URL = `https://nsearchives.nseindia.com/archives/equities/mkt/${fileName}`;
-    const response = await axiosInstance.get(NSE_SECTORCOPY_URL, {
+    const response = await axios.get(NSE_SECTORCOPY_URL, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -132,12 +106,12 @@ const fetchNifty500Data = async (cookies) => {
   try {
     const NIFTY500_URL =
       "https://nsearchives.nseindia.com/content/indices/ind_nifty500list.csv";
-    const response = await axiosInstance.get(NIFTY500_URL, {
+    const response = await axios.get(NIFTY500_URL, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         Referer: "https://www.nseindia.com/",
-        Cookie: cookies.join("; "),
+        Cookie: cookies?.join("; "),
       },
     });
 
@@ -234,7 +208,7 @@ const parseCSV1 = (csvData) => {
 // ** Function to fetch NSE Underlying Information and extract symbols **
 const getNseUnderlyingSymbols = async (cookies) => {
   try {
-    const response = await axiosInstance.get(NSE_UNDERLYING_URL, {
+    const response = await axios.get(NSE_UNDERLYING_URL, {
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -305,24 +279,22 @@ app.get("/nse-bhavcopy", async (req, res) => {
         .json({ error: "At least two dates are required for comparison" });
     }
 
+    // Get NSE session cookies
+    const data = await fetchNifty500Data();    
+    const industryMap = data.reduce((acc, item) => {
+      acc[item.Symbol] = item.Industry;
+      return acc;
+    }, {});
     const cookies = await getNseCookies();
-    console.log(cookies);
-    
     if (!cookies) {
       return res
         .status(500)
         .json({ error: "Failed to fetch NSE session cookies" });
     }
-    // Get NSE session cookies
-    const data = await fetchNifty500Data(cookies);
-    const industryMap = data.reduce((acc, item) => {
-      acc[item.Symbol] = item.Industry;
-      return acc;
-    }, {});
-    
 
     // Fetch NSE Underlying Symbols
     const validSymbols = await getNseUnderlyingSymbols(cookies);
+    
     if (!validSymbols || validSymbols.size === 0) {
       return res
         .status(500)
@@ -340,6 +312,7 @@ app.get("/nse-bhavcopy", async (req, res) => {
     const earlierData = bhavcopyData[earlierDate] || [];
     const laterData = bhavcopyData[laterDate] || [];
 
+    
     // Create a map for earlier date data
     const earlierMap = {};
     earlierData.forEach((item) => {
@@ -664,6 +637,6 @@ app.get("/sector-daily", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${port}`);
 });
