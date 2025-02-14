@@ -3,28 +3,40 @@ const axios = require('axios');
 const cors = require('cors');
 const app = express();
 const PORT = 3000;
+const puppeteer = require('puppeteer');
+app.use(
+  cors({
+    origin: "https://stocks-screener-2.onrender.com", // Update this
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
-app.use(cors());
 const NSE_BHAVCOPY_URL = "https://www.nseindia.com/api/reports";
 const NSE_UNDERLYING_URL =
   "https://www.nseindia.com/api/underlying-information";
 
 // ** Function to get NSE session cookies **
 const getNseCookies = async () => {
-  try {
-    const response = await axios.get("https://www.nseindia.com/", {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-      },
-    });
+  const browser = await puppeteer.launch({ headless: false }); // Change to false for debugging
+  const page = await browser.newPage();
 
-    return response.headers["set-cookie"];
-  } catch (error) {
-    console.error("Error fetching NSE cookies:", error.message);
-    return null;
-  }
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  );
+
+  await page.goto("https://www.nseindia.com/", {
+    waitUntil: "networkidle0", // Wait until no more requests
+    timeout: 60000, // Increase timeout
+  });
+
+  await page.waitForTimeout(5000); // Wait to ensure cookies are loaded
+
+  const cookies = await page.cookies();
+  await browser.close();
+  return cookies.map((c) => `${c.name}=${c.value}`).join("; ");
 };
+
 
 // ** Function to fetch Bhavcopy data for a given date **
 const fetchBhavcopyData = async (date, cookies) => {
