@@ -37,7 +37,6 @@ const getNseCookies = async () => {
 };
 
 
-
 // ** Function to fetch Bhavcopy data for a given date **
 const fetchBhavcopyData = async (date, cookies) => {
   try {
