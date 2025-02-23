@@ -1,41 +1,31 @@
-const express = require('express');
-const axios = require('axios');
-const cors = require('cors');
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
 const app = express();
 const PORT = 3000;
-const puppeteer = require('puppeteer');
-app.use(
-  cors({
-    origin: "https://stocks-screener-2.onrender.com", // Update this
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
 
+app.use(cors());
 const NSE_BHAVCOPY_URL = "https://www.nseindia.com/api/reports";
 const NSE_UNDERLYING_URL =
   "https://www.nseindia.com/api/underlying-information";
 
 // ** Function to get NSE session cookies **
 const getNseCookies = async () => {
-  const browser = await puppeteer.launch({
-    headless: "new",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  });
-  const page = await browser.newPage();
+  try {
+    const response = await axios.get("https://www.nseindia.com/", {
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+      },
+    });
 
-  await page.goto("https://www.nseindia.com/", {
-    waitUntil: "networkidle2",
-  });
-
-  await page.waitForTimeout(5000); // Give extra time to load cookies
-
-  const cookies = await page.cookies();
-  await browser.close();
-  
-  return cookies.map((c) => `${c.name}=${c.value}`).join("; ");
+    return response.headers["set-cookie"];
+  } catch (error) {
+    console.error("Error fetching NSE cookies:", error.message);
+    return null;
+  }
 };
-
 
 // ** Function to fetch Bhavcopy data for a given date **
 const fetchBhavcopyData = async (date, cookies) => {
@@ -296,6 +286,8 @@ app.get("/nse-bhavcopy", async (req, res) => {
       return acc;
     }, {});
     const cookies = await getNseCookies();
+    console.log(cookies);
+    
     if (!cookies) {
       return res
         .status(500)
@@ -646,7 +638,6 @@ app.get("/sector-daily", async (req, res) => {
     });
   }
 });
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
