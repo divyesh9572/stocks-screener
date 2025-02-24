@@ -1,28 +1,55 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const https = require("https");
+const axiosRetry = require("axios-retry").default;
 
 const app = express();
 const PORT = 3000;
 
+// ** Keep-Alive Agent for Persistent Connections **
+const agent = new https.Agent({ keepAlive: true });
+
+// ** Axios Instance with Custom Configuration **
+const axiosInstance = axios.create({
+  httpsAgent: agent,
+  timeout: 15000, // 15 seconds timeout
+  headers: {
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+    Connection: "keep-alive",
+  },
+});
+
+// ** Axios Retry Mechanism **
+axiosRetry(axiosInstance, {
+  retries: 3,
+  retryDelay: (retryCount) => {
+    console.log(`Retrying request... Attempt ${retryCount}`);
+    return retryCount * 2000; // Delay increases with retries (2s, 4s, 6s)
+  },
+  retryCondition: (error) =>
+    error.code === "ECONNRESET" || error.code === "ETIMEDOUT" || error.response?.status === 429, // Retry on NSE rate limit errors
+});
+
 app.use(cors());
+let cachedCookies = null;
+
 const NSE_BHAVCOPY_URL = "https://www.nseindia.com/api/reports";
 const NSE_UNDERLYING_URL =
   "https://www.nseindia.com/api/underlying-information";
 
 // ** Function to get NSE session cookies **
 const getNseCookies = async () => {
-  try {
-    const response = await axios.get("https://www.nseindia.com/", {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-      },
-    });
+  if (cachedCookies) return cachedCookies; // Return cached cookies if available
 
-    return response.headers["set-cookie"];
+  try {
+    const response = await axiosInstance.get("https://www.nseindia.com/");
+    cachedCookies = response.headers["set-cookie"];
+    console.log("✅ NSE Cookies Fetched:", cachedCookies);
+    return cachedCookies;
   } catch (error) {
-    console.error("Error fetching NSE cookies:", error.message);
+    console.error("❌ Error Fetching NSE Cookies:", error.message);
     return null;
   }
 };
