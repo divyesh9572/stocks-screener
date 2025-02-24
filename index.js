@@ -3,17 +3,19 @@ const axios = require("axios");
 const cors = require("cors");
 const https = require("https");
 const axiosRetry = require("axios-retry").default;
+const { HttpsProxyAgent } = require("https-proxy-agent");
 
 const app = express();
 const PORT = 3000;
 
-// ** Keep-Alive Agent for Persistent Connections **
-const agent = new https.Agent({ keepAlive: true });
 
-// ** Axios Instance with Custom Configuration **
+const customAgent = new https.Agent({
+  rejectUnauthorized: false, // ✅ Ignore SSL errors
+});
+
 const axiosInstance = axios.create({
-  httpsAgent: agent,
-  timeout: 15000, // 15 seconds timeout
+  timeout: 30000,
+  httpsAgent: customAgent, // ✅ Use the custom HTTPS agent
   headers: {
     "User-Agent":
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -21,17 +23,15 @@ const axiosInstance = axios.create({
   },
 });
 
-// ** Axios Retry Mechanism **
-axiosRetry(axiosInstance, {
-  retries: 3,
-  retryDelay: (retryCount) => {
-    console.log(`Retrying request... Attempt ${retryCount}`);
-    return retryCount * 2000; // Delay increases with retries (2s, 4s, 6s)
-  },
-  retryCondition: (error) =>
-    error.code === "ECONNRESET" || error.code === "ETIMEDOUT" || error.response?.status === 429, // Retry on NSE rate limit errors
-});
 
+(async () => {
+  try {
+    const response = await axiosInstance.get("https://www.nseindia.com/");
+    console.log("✅ Proxy request successful:", response.status);
+  } catch (error) {
+    console.error("❌ Proxy request failed:", error.message);
+  }
+})();
 app.use(cors());
 let cachedCookies = null;
 
