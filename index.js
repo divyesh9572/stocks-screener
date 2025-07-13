@@ -6,60 +6,107 @@ const cors = require("cors");
 app.use(cors());
 
 const niftyMap = {
+  ABB: "Not Found",
+  ADANIENSOL: "Not Found",
   ADANIENT: "Nifty Metal",
+  ADANIGREEN: "Not Found",
   ADANIPORTS: "Nifty Infrastructure",
+  ADANIPOWER: "Not Found",
+  AMBUJACEM: "Nifty MNC",
   APOLLOHOSP: "Nifty Healthcare",
   ASIANPAINT: "Nifty India Consumption",
+  DMART: "Not Found",
   AXISBANK: "Nifty Private Bank",
   "BAJAJ-AUTO": "Nifty Auto",
-  BAJFINANCE: "Nifty Auto",
-  BAJAJFINSV: "Nifty Auto",
+  BAJFINANCE: "Nifty Financial Services",
+  BAJAJFINSV: "Nifty Financial Services",
+  BAJAJHLDNG: "Not Found",
+  BAJAJHFL: "Not Found",
+  BANKBARODA: "Nifty psu bank",
   BEL: "Nifty CPSE",
-  BPCL: "Nifty CPSE",
+  BPCL: "Nifty Oil & Gas",
   BHARTIARTL: "Nifty Infrastructure",
+  BOSCHLTD: "Not Found",
   BRITANNIA: "Nifty MNC",
+  CGPOWER: "Nifty Energy",
+  CANBK: "Nifty psu bank",
+  CHOLAFIN: "Not Found",
   CIPLA: "Nifty Pharma",
   COALINDIA: "Nifty CPSE",
+  DLF: "Nifty realty",
+  DABUR: "Not Found",
+  DIVISLAB: "Nifty Pharma",
   DRREDDY: "Nifty Pharma",
+  DUMMYSIEMS: "Not Found",
   EICHERMOT: "Nifty Auto",
   ETERNAL: "Nifty India Consumption",
+  GAIL: "Nifty Oil & Gas",
+  GODREJCP: "Nifty FMCG",
   GRASIM: "Nifty Commodities",
   HCLTECH: "Nifty IT",
   HDFCBANK: "Nifty Financial Services",
   HDFCLIFE: "Nifty Financial Services",
+  HAVELLS: "Nifty consumer durables",
   HEROMOTOCO: "Nifty Auto",
   HINDALCO: "Nifty Metal",
+  HAL: "Nifty PSE",
   HINDUNILVR: "Nifty FMCG",
+  HYUNDAI: "Not Found",
   ICICIBANK: "Nifty Financial Services",
+  ICICIGI: "Not Found",
+  ICICIPRULI: "Not Found",
   ITC: "Nifty FMCG",
+  INDHOTEL: "Not Found",
+  IOC: "Nifty Oil & Gas",
+  IRFC: "Not Found",
   INDUSINDBK: "Nifty Private Bank",
+  NAUKRI: "Not Found",
   INFY: "Nifty IT",
+  INDIGO: "Nifty India Consumption",
+  JSWENERGY: "Not Found",
+  JSWSTEEL: "Nifty Metal",
+  JINDALSTEL: "Nifty Metal",
   JIOFIN: "Nifty Financial Services",
   KOTAKBANK: "Nifty Private Bank",
+  LTIM: "Nifty IT",
   LT: "Nifty Infrastructure",
+  LICI: "Not Found",
+  LODHA: "Nifty realty",
   "M&M": "Nifty Auto",
   MARUTI: "Nifty Auto",
   NTPC: "Nifty CPSE",
   NESTLEIND: "Nifty MNC",
   ONGC: "Nifty Oil & Gas",
+  PIDILITIND: "Not Found",
+  PFC: "Nifty PSE",
   POWERGRID: "Nifty CPSE",
+  PNB: "Nifty psu bank",
+  RECLTD: "Nifty PSE",
   RELIANCE: "Nifty Oil & Gas",
   SBILIFE: "Not Found",
+  MOTHERSON: "Nifty Auto",
+  SHREECEM: "Not Found",
   SHRIRAMFIN: "Nifty Financial Services",
+  SIEMENS: "Not Found",
   SBIN: "Nifty psu bank",
   SUNPHARMA: "Nifty Pharma",
+  SWIGGY: "Not Found",
+  TVSMOTOR: "Nifty Auto",
   TCS: "Nifty IT",
-  TATACONSUM: "Nifty IT",
-  TATAMOTORS: "Nifty IT",
+  TATACONSUM: "Nifty FMCG",
+  TATAMOTORS: "Nifty Auto",
+  TATAPOWER: "Nifty Energy",
   TATASTEEL: "Nifty Metal",
-  TECHM: "Nifty realty",
+  TECHM: "Nifty IT",
   TITAN: "Nifty consumer durables",
+  TORNTPHARM: "Nifty Pharma",
   TRENT: "Nifty India Consumption",
   ULTRACEMCO: "Nifty Commodities",
+  UNITDSPR: "Nifty MNC",
+  VBL: "Nifty FMCG",
+  VEDL: "Nifty Metal",
   WIPRO: "Nifty IT",
-  BAJFINANCE: "Nifty Auto",
-  JSWSTEEL: "Nifty Metal",
-  HCLTECH: "Nifty IT",
+  ZYDUSLIFE: "Not Found",
 };
 
 async function getData(symbol, date, retries = 3, timeout = 5000) {
@@ -285,56 +332,107 @@ app.get("/nse-bhavcopy", async (req, res) => {
       }
     });
     const data = [
+      { Industry: "Capital Goods", Symbol: "ABB" },
+      { Industry: "Power", Symbol: "ADANIENSOL" },
       { Industry: "Metals & Mining", Symbol: "ADANIENT" },
+      { Industry: "Power", Symbol: "ADANIGREEN" },
       { Industry: "Services", Symbol: "ADANIPORTS" },
+      { Industry: "Power", Symbol: "ADANIPOWER" },
+      { Industry: "Construction Materials", Symbol: "AMBUJACEM" },
       { Industry: "Healthcare", Symbol: "APOLLOHOSP" },
       { Industry: "Consumer Durables", Symbol: "ASIANPAINT" },
+      { Industry: "Consumer Services", Symbol: "DMART" },
       { Industry: "Financial Services", Symbol: "AXISBANK" },
       { Industry: "Automobile and Auto Components", Symbol: "BAJAJ-AUTO" },
       { Industry: "Financial Services", Symbol: "BAJFINANCE" },
       { Industry: "Financial Services", Symbol: "BAJAJFINSV" },
+      { Industry: "Financial Services", Symbol: "BAJAJHLDNG" },
+      { Industry: "Financial Services", Symbol: "BAJAJHFL" },
+      { Industry: "Financial Services", Symbol: "BANKBARODA" },
       { Industry: "Capital Goods", Symbol: "BEL" },
+      { Industry: "Oil Gas & Consumable Fuels", Symbol: "BPCL" },
       { Industry: "Telecommunication", Symbol: "BHARTIARTL" },
+      { Industry: "Automobile and Auto Components", Symbol: "BOSCHLTD" },
+      { Industry: "Fast Moving Consumer Goods", Symbol: "BRITANNIA" },
+      { Industry: "Capital Goods", Symbol: "CGPOWER" },
+      { Industry: "Financial Services", Symbol: "CANBK" },
+      { Industry: "Financial Services", Symbol: "CHOLAFIN" },
       { Industry: "Healthcare", Symbol: "CIPLA" },
       { Industry: "Oil Gas & Consumable Fuels", Symbol: "COALINDIA" },
+      { Industry: "Realty", Symbol: "DLF" },
+      { Industry: "Fast Moving Consumer Goods", Symbol: "DABUR" },
+      { Industry: "Healthcare", Symbol: "DIVISLAB" },
       { Industry: "Healthcare", Symbol: "DRREDDY" },
+      { Industry: "Capital Goods", Symbol: "DUMMYSIEMS" },
       { Industry: "Automobile and Auto Components", Symbol: "EICHERMOT" },
       { Industry: "Consumer Services", Symbol: "ETERNAL" },
+      { Industry: "Oil Gas & Consumable Fuels", Symbol: "GAIL" },
+      { Industry: "Fast Moving Consumer Goods", Symbol: "GODREJCP" },
       { Industry: "Construction Materials", Symbol: "GRASIM" },
       { Industry: "Information Technology", Symbol: "HCLTECH" },
       { Industry: "Financial Services", Symbol: "HDFCBANK" },
       { Industry: "Financial Services", Symbol: "HDFCLIFE" },
+      { Industry: "Consumer Durables", Symbol: "HAVELLS" },
       { Industry: "Automobile and Auto Components", Symbol: "HEROMOTOCO" },
       { Industry: "Metals & Mining", Symbol: "HINDALCO" },
+      { Industry: "Capital Goods", Symbol: "HAL" },
       { Industry: "Fast Moving Consumer Goods", Symbol: "HINDUNILVR" },
+      { Industry: "Automobile and Auto Components", Symbol: "HYUNDAI" },
       { Industry: "Financial Services", Symbol: "ICICIBANK" },
+      { Industry: "Financial Services", Symbol: "ICICIGI" },
+      { Industry: "Financial Services", Symbol: "ICICIPRULI" },
       { Industry: "Fast Moving Consumer Goods", Symbol: "ITC" },
+      { Industry: "Consumer Services", Symbol: "INDHOTEL" },
+      { Industry: "Oil Gas & Consumable Fuels", Symbol: "IOC" },
+      { Industry: "Financial Services", Symbol: "IRFC" },
       { Industry: "Financial Services", Symbol: "INDUSINDBK" },
+      { Industry: "Consumer Services", Symbol: "NAUKRI" },
       { Industry: "Information Technology", Symbol: "INFY" },
+      { Industry: "Services", Symbol: "INDIGO" },
+      { Industry: "Power", Symbol: "JSWENERGY" },
       { Industry: "Metals & Mining", Symbol: "JSWSTEEL" },
+      { Industry: "Metals & Mining", Symbol: "JINDALSTEL" },
       { Industry: "Financial Services", Symbol: "JIOFIN" },
       { Industry: "Financial Services", Symbol: "KOTAKBANK" },
+      { Industry: "Information Technology", Symbol: "LTIM" },
       { Industry: "Construction", Symbol: "LT" },
+      { Industry: "Financial Services", Symbol: "LICI" },
+      { Industry: "Realty", Symbol: "LODHA" },
       { Industry: "Automobile and Auto Components", Symbol: "M&M" },
       { Industry: "Automobile and Auto Components", Symbol: "MARUTI" },
       { Industry: "Power", Symbol: "NTPC" },
       { Industry: "Fast Moving Consumer Goods", Symbol: "NESTLEIND" },
       { Industry: "Oil Gas & Consumable Fuels", Symbol: "ONGC" },
+      { Industry: "Chemicals", Symbol: "PIDILITIND" },
+      { Industry: "Financial Services", Symbol: "PFC" },
       { Industry: "Power", Symbol: "POWERGRID" },
+      { Industry: "Financial Services", Symbol: "PNB" },
+      { Industry: "Financial Services", Symbol: "RECLTD" },
       { Industry: "Oil Gas & Consumable Fuels", Symbol: "RELIANCE" },
       { Industry: "Financial Services", Symbol: "SBILIFE" },
+      { Industry: "Automobile and Auto Components", Symbol: "MOTHERSON" },
+      { Industry: "Construction Materials", Symbol: "SHREECEM" },
       { Industry: "Financial Services", Symbol: "SHRIRAMFIN" },
+      { Industry: "Capital Goods", Symbol: "SIEMENS" },
       { Industry: "Financial Services", Symbol: "SBIN" },
       { Industry: "Healthcare", Symbol: "SUNPHARMA" },
+      { Industry: "Consumer Services", Symbol: "SWIGGY" },
+      { Industry: "Automobile and Auto Components", Symbol: "TVSMOTOR" },
       { Industry: "Information Technology", Symbol: "TCS" },
       { Industry: "Fast Moving Consumer Goods", Symbol: "TATACONSUM" },
       { Industry: "Automobile and Auto Components", Symbol: "TATAMOTORS" },
+      { Industry: "Power", Symbol: "TATAPOWER" },
       { Industry: "Metals & Mining", Symbol: "TATASTEEL" },
       { Industry: "Information Technology", Symbol: "TECHM" },
       { Industry: "Consumer Durables", Symbol: "TITAN" },
+      { Industry: "Healthcare", Symbol: "TORNTPHARM" },
       { Industry: "Consumer Services", Symbol: "TRENT" },
       { Industry: "Construction Materials", Symbol: "ULTRACEMCO" },
+      { Industry: "Fast Moving Consumer Goods", Symbol: "UNITDSPR" },
+      { Industry: "Fast Moving Consumer Goods", Symbol: "VBL" },
+      { Industry: "Metals & Mining", Symbol: "VEDL" },
       { Industry: "Information Technology", Symbol: "WIPRO" },
+      { Industry: "Healthcare", Symbol: "ZYDUSLIFE" },
     ];
 
     const industryMap = data.reduce((acc, item) => {
@@ -348,6 +446,7 @@ app.get("/nse-bhavcopy", async (req, res) => {
       let obj = {
         CH_SYMBOL: data["CH_SYMBOL"],
         // DEL_QTY_TODAY: data["COP_DELIV_QTY"],
+        Industry: industryMap[data["CH_SYMBOL"]],
         DEL_PER_TODAY: data["COP_DELIV_PERC"], // Current date COP_DELIV_PERC
         // DEL_QTY_YESTERDAY: earlierEntry ? earlierEntry["COP_DELIV_QTY"] : null, // Earlier date COP_DELIV_PERC
         NAME: niftyMap[data.CH_SYMBOL],
@@ -373,19 +472,22 @@ app.get("/nse-bhavcopy", async (req, res) => {
           let sumlaterData = 0;
           earlierData.data.forEach((val) => {
             if (fSet.has(val.CH_SYMBOL)) {
-              sumearlierData += val.COP_DELIV_QTY;
+              sumearlierData += val.CH_TOT_TRADED_QTY;
             }
           });
           laterData.data.forEach((val) => {
             if (fSet.has(val.CH_SYMBOL)) {
-              sumlaterData += val.COP_DELIV_QTY;
+              sumlaterData += val.CH_TOT_TRADED_QTY;
             }
           });
-          if (sumearlierData >= sumlaterData) {
-            obj["SEC_BREAKOUT"] = "Yes";
-          } else {
-            obj["SEC_BREAKOUT"] = "No";
-          }
+
+          // Calculate the ratio and store it directly
+          const ratio =
+            sumlaterData !== 0
+              ? (sumearlierData / sumlaterData).toFixed(2)
+              : "Infinity";
+          obj["SEC_BREAKOUT"] = ratio;
+
           finaldata.push(obj);
         }
       } else {
@@ -418,7 +520,7 @@ app.get("/nse-bhavcopy", async (req, res) => {
 
       // Price Breakout Ratio
       if (earlierEntry.CH_PREVIOUS_CLS_PRICE > 0) {
-        obj.PB= parseFloat(
+        obj.PB = parseFloat(
           (
             data.CH_LAST_TRADED_PRICE / earlierEntry.CH_PREVIOUS_CLS_PRICE
           ).toFixed(2)
